@@ -1,22 +1,25 @@
 package com.project.BlogApplication;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
+@Configuration
+@EnableJpaRepositories
 public class BlogApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(BlogApplication.class, args);
+		
+//		int[] nums= {1,1,2,2,3,3,4};
+//		Set<Integer> setis =Arrays.stream(nums).filter(item->Collections.frequency(nums, item)<=1).collect(Collectors.toSet());;
+
+		
+		
 //		List<String> list=List.of("Prerna","Bab","ank","pram","bhumi");
 //		Comparator<String> com= new Comparator<String>() {
 //			

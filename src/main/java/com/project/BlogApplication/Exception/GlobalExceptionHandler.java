@@ -21,12 +21,7 @@ public class GlobalExceptionHandler {
 		
 	}
 	
-//	@ExceptionHandler(MethodArgumentNotValidException.class)
-//	public ResponseEntity<ApiResponse> abc(MethodArgumentNotValidException ex){
-//		String message=ex.getMessage();
-//		ApiResponse apiResponse= new ApiResponse(message, false);
-//		return new ResponseEntity<ApiResponse>(apiResponse,HttpStatus.METHOD_NOT_ALLOWED);
-//	}
+
 	
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<Map<String, String>> methodArgsNotValid(MethodArgumentNotValidException ex){
@@ -37,6 +32,13 @@ public class GlobalExceptionHandler {
 			response.put(fieldName, message);
 		});
 		return new ResponseEntity<Map<String,String>>(response,HttpStatus.BAD_REQUEST);
+		
+	}
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<ApiResponse> abc(IllegalArgumentException ex){
+		String message=ex.getMessage();
+		ApiResponse apiresponse= new ApiResponse(message,false);
+		return new ResponseEntity<ApiResponse>(apiresponse,HttpStatus.NOT_FOUND);
 		
 	}
 	

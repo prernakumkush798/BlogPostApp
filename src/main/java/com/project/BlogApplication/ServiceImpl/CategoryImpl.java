@@ -1,6 +1,7 @@
 package com.project.BlogApplication.ServiceImpl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -17,48 +18,61 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @Service
 public class CategoryImpl implements CategoryService {
-	
+
 	CategoryRepository categoryRepo;
 	ModelMapper modelMapper;
 
 	@Override
 	public CategoryDto addCategory(CategoryDto categoryDto) {
-		
-		Category category= this.modelMapper.map(categoryDto, Category.class);
-		Category savedCategory=this.categoryRepo.save(category);
-		CategoryDto newCategoryDto=this.modelMapper.map(savedCategory, CategoryDto.class);
+		Optional<Category> existingCategoryById = this.categoryRepo.findById(categoryDto.getCategoryId());
+		if (existingCategoryById.isPresent()) {
+			throw new IllegalArgumentException("Category with the same ID already exists.");
+		}
+
+		// Check for existing category by title
+		Optional<Category> existingCategoryByTitle = this.categoryRepo.findByCategoryTitle(categoryDto.getCategoryTitle());
+		if (existingCategoryByTitle.isPresent()) {
+			throw new IllegalArgumentException("Category with the same title already exists.");
+		}
+		Category category = this.modelMapper.map(categoryDto, Category.class);
+		Category savedCategory = this.categoryRepo.save(category);
+		CategoryDto newCategoryDto = this.modelMapper.map(savedCategory, CategoryDto.class);
 		return newCategoryDto;
 	}
 
 	@Override
 	public void deleteCategoryById(int id) {
 		// TODO Auto-generated method stub
-		Category category=this.categoryRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("Category", "Category id", id));
+		Category category = this.categoryRepo.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Category", "Category id", id));
 		this.categoryRepo.delete(category);
-	
+
 	}
 
 	@Override
 	public CategoryDto getCategoryById(int id) {
 		// TODO Auto-generated method stub
-		Category category=this.categoryRepo.findById(id).orElseThrow(()-> new ResourceNotFoundException("Category", "category id", id));
+		Category category = this.categoryRepo.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Category", "category id", id));
 		return this.modelMapper.map(category, CategoryDto.class);
 	}
 
 	@Override
-	public CategoryDto updateCategory(CategoryDto categoryDto,int id) {
-		Category category=this.categoryRepo.findById(id).orElseThrow(()-> new ResourceNotFoundException("Category", "Category Id", id));
+	public CategoryDto updateCategory(CategoryDto categoryDto, int id) {
+		Category category = this.categoryRepo.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Category", "Category Id", id));
 		category.setCategoryDescription(categoryDto.getCategoryDescription());
 		category.setCategoryTitle(categoryDto.getCategoryTitle());
-		Category updatedCategory=this.categoryRepo.save(category);
+		Category updatedCategory = this.categoryRepo.save(category);
 		return this.modelMapper.map(updatedCategory, CategoryDto.class);
 	}
 
 	@Override
 	public List<CategoryDto> getAllCategories() {
-		List<Category> categoryItem= this.categoryRepo.findAll();
-		List<CategoryDto> categoryDtoItem=categoryItem.stream().map((item)->this.modelMapper.map(item, CategoryDto.class)).collect(Collectors.toList());
-	 return categoryDtoItem;
+		List<Category> categoryItem = this.categoryRepo.findAll();
+		List<CategoryDto> categoryDtoItem = categoryItem.stream()
+				.map((item) -> this.modelMapper.map(item, CategoryDto.class)).collect(Collectors.toList());
+		return categoryDtoItem;
 	}
 
 }

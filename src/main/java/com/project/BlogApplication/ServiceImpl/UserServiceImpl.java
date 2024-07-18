@@ -1,6 +1,7 @@
 package com.project.BlogApplication.ServiceImpl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -24,6 +25,10 @@ public class UserServiceImpl implements UserService {
 
 	@Transactional
 	public UserDto add(UserDto userdto) {
+		Optional<User> userexists=this.repository.findByEmail(userdto.getEmail());
+		if(userexists.isPresent()) {
+			throw new IllegalArgumentException("User with this email already exists.");
+		}
 		User user = this.userDtoToUser(userdto);
 		User savedUser = this.repository.save(user);
 		return this.userToUserDto(savedUser);
